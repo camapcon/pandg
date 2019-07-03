@@ -1,0 +1,101 @@
+<template>
+  <div class="page product-page">
+    <div class="navbar">
+      <div class="navbar-inner sliding">
+        <a href="#" class="link back">
+          <i class="icon icon-back"></i>
+          <span class="ios-only">Quay lại</span>
+        </a>
+        <div class="title">Báo cáo tồn kho</div>
+        <div class="subnavbar color-theme-white" style="top:180%;">
+          <div class="list media-list no-ios-edges">
+              <ul>
+                <li class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-title" style="color:#333;">
+                      Thương hiệu {{this.$route.params.brand}}
+                    </div>
+                  </div>
+                </li>
+              </ul>
+          </div>
+        </div>
+        <div class="subnavbar">
+          <form data-search-container=".search-list" data-search-in=".item-title" class="searchbar searchbar-init">
+            <div class="searchbar-inner">
+              <div class="searchbar-input-wrap">
+                <input type="search" placeholder="Tìm sản phẩm ({{category}})"/>
+                <i class="searchbar-icon"></i>
+                <span class="input-clear-button"></span>
+              </div>
+              <span class="searchbar-disable-button">Thôi</span>
+            </div>
+          </form>
+        </div>
+        <div class="right">
+          <a href="#" class="link icon-only panel-open" data-panel="right">
+            <i class="icon f7-icons ios-only">menu</i>
+            <i class="icon material-icons md-only">menu</i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="page-content" style="padding-top:150px;">
+        <div class="searchbar-backdrop"></div>
+        <div class="list simple-list searchbar-not-found">
+          <ul>
+            <li>Không tìm thấy sản phẩm</li>
+          </ul>
+        </div>
+        <div class="list search-list searchbar-found">
+          <ul>
+            {{#each products}}
+            <li>
+              <a class="item-content item-link" @click="enterdata('{{this.id}}');">
+                <div class="item-inner">
+                  <div class="item-title">{{this.sku_vi}}</div>
+                </div>
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+    </div>
+  </div>
+</template>
+<script>
+  return {
+    // Component Methods
+    methods: {
+      enterdata: function (productid) {
+        var $ = this.$;
+        var app = this.$app;
+        var router = this.$router;
+        router.navigate('/inventory_enterdata/'+productid+'/');
+      }
+    },
+    // Component Data
+    data: function () {
+      // Must return an object
+      var category = '';
+      for(i=0; i<this.$app.data.preload.categories.length; i++)
+      {
+        if(this.$app.data.preload.categories[i]['id']==this.$route.params.categoryid){
+          category = this.$app.data.preload.categories[i]['name'];
+          break;
+        }
+      }
+      var products = new Array();
+      for(var i in this.$app.data.preload.products[this.$route.params.categoryid])
+      {
+        if(this.$app.data.preload.products[this.$route.params.categoryid][i].brand==this.$route.params.brand)
+          products.push(this.$app.data.preload.products[this.$route.params.categoryid][i]);
+      }
+      return {
+        products: products,
+        brands: this.$app.data.preload.brands,
+        category: category
+      }
+    },
+  }
+</script>

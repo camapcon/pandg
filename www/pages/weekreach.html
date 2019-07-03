@@ -1,0 +1,98 @@
+<template>
+  <div class="page">
+    <div class="navbar">
+      <div class="navbar-inner sliding">
+        <div class="left">
+          <a href="#" class="link back">
+            <i class="icon icon-back"></i>
+            <span class="ios-only">Quay lại</span>
+          </a>
+        </div>
+        <div class="title">Thành tích trong tuần</div>
+        <div class="right">
+          <a href="#" class="link icon-only panel-open" data-panel="right">
+            <i class="icon f7-icons ios-only">menu</i>
+            <i class="icon material-icons md-only">menu</i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="page-content grid-report">
+      <div class="card">
+        <div class="card-content card-content-padding">
+          <table>
+            <thead>
+              <tr>
+                <th width="45%" class="label-cell" align="left">Ngày</th>
+                <th class="numeric-cell" align="center">Đạt</th>
+                <th class="numeric-cell" align="center">Chỉ tiêu</th>
+                <th class="numeric-cell" align="center">%</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each reports}}
+              <tr>
+                <td class="label-cell" align="left">{{this.day}}</td>
+                <td class="numeric-cell" align="center"><span class="badge">{{this.reach}}</span></td>
+                <td class="numeric-cell" align="center"><span class="badge">{{this.target}}</span></td>
+                <td class="numeric-cell" align="center"><span class="badge">{{this.percent}}</span></td>
+              </tr>
+              {{else}}
+              <tr>
+                <td class="label-cell text-color-red" colspan="4" align="center" style="padding:10px;">Bạn chưa gửi báo cáo nào trong tuần</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  return {
+    // Component Methods
+    methods: {
+      showToastBottom: function (text, closed) {
+        var self = this;
+        // Create toast
+        if (!self.toastBottom) {
+          self.toastBottom = self.$app.toast.create({
+            icon: self.$theme.ios ? '<i class="f7-icons">check</i>' : '<i class="material-icons">check</i>',
+            text: text,
+            position: 'center',
+            closeTimeout: 2000,
+            animate: true,
+            on:{
+              closed:closed
+            }
+          });
+        }
+        // Open it
+        self.toastBottom.open();
+      },
+      submit: function () {
+        var self = this;
+        var $ = this.$;
+        var app = this.$app;
+        var router = this.$router;
+        var token = localStorage.getItem("token");
+        try{
+            
+        }
+        catch(e){app.dialog.alert(e.message, 'Báo lỗi');}
+      }
+    },
+    on: {
+      pageBeforeOut: function () {
+        var self = this;
+        self.$app.toast.close();
+      },
+      pageBeforeRemove: function () {
+        var self = this;
+        // Destroy toasts when page removed
+        if (self.toastBottom) self.toastBottom.destroy();
+      }
+    }
+  }
+</script>

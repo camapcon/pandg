@@ -1,0 +1,92 @@
+<template>
+  <div class="page">
+    <div class="navbar">
+      <div class="navbar-inner sliding">
+        <div class="left">
+          <a href="#" class="link back">
+            <i class="icon icon-back"></i>
+            <span class="ios-only">Quay lại</span>
+          </a>
+        </div>
+        <div class="title">Báo cáo hụt hàng</div>
+        <div class="right">
+          <a @click="scan" class="link icon-only">
+            <i class="icon f7-icons">camera</i>
+          </a>
+          <a href="#" class="link icon-only panel-open" data-panel="right">
+            <i class="icon f7-icons ios-only">menu</i>
+            <i class="icon material-icons md-only">menu</i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="block-title">Chọn nhóm sản phẩm</div>
+      <div class="block">
+        <div class="list components-list">
+          <ul>
+            {{#each $root.preload.categories}}
+            <li>
+              <a class="item-content item-link" @click="showProducts('{{this.id}}');">
+                <div class="item-media"><i class="icon icon-f7"></i></div>
+                <div class="item-inner">
+                  <div class="item-title">{{this.name}}</div>
+                </div>
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  return {
+    // Component Methods
+    methods: {
+      showProducts: function (categoryid) {
+        var self = this;
+        var $ = this.$;
+        var app = this.$app;
+        var router = this.$router;
+        router.navigate('/outstock_product/'+categoryid+'/');
+      },
+      scan: function() {
+        var self = this;
+        var $ = this.$;
+        var app = this.$app;
+        var router = this.$router;
+        try{
+        cordova.plugins.barcodeScanner.scan(
+          function (result) {
+            for(var id in self.$app.data.preload.byids){
+              if(self.$app.data.preload.byids[id].barcode==result.text){
+                router.navigate('/outstock_enterdata/'+id+'/');
+                return;
+              }
+            }
+            app.dialog.alert('Không tìm thấy sản phẩm này', 'Báo lỗi');
+          },
+          function (error) {
+              app.dialog.alert('Không thể đọc được mã', 'Báo lỗi');
+          },
+          {
+              preferFrontCamera : true, // iOS and Android
+              showFlipCameraButton : true, // iOS and Android
+              showTorchButton : true, // iOS and Android
+              torchOn: false, // Android, launch with the torch switched on (if available)
+              saveHistory: false, // Android, save scan history (default false)
+              prompt : "Chụp mã trên sản phẩm", // Android
+              resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
+              formats : "all", // default: all but PDF_417 and RSS_EXPANDED
+              orientation : "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
+              disableAnimations : false, // iOS
+              disableSuccessBeep: false // iOS and Android
+          }
+        );
+        }catch(e){app.dialog.alert(e.message);};
+      }
+    }
+  }
+</script>

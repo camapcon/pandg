@@ -1,0 +1,181 @@
+<template>
+  <div class="page">
+    <div class="navbar">
+      <div class="navbar-inner sliding">
+        <div class="left">
+          <a href="#" class="link back">
+            <i class="icon icon-back"></i>
+            <span class="ios-only">Quay lại</span>
+          </a>
+        </div>
+        <div class="title">Gửi báo cáo</div>
+        <div class="right">
+          <a @click="scan" class="link icon-only">
+            <i class="icon f7-icons">camera</i>
+          </a>
+          <a href="#" class="link icon-only panel-open" data-panel="right">
+            <i class="icon f7-icons ios-only">menu</i>
+            <i class="icon material-icons md-only">menu</i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="block-title">Nhập từ Bluetooth</div>
+      <div class="list simple-list">
+        <ul>
+          <li>
+            <div><span id="bluetooth_status">Đang chờ...</span><div style="height:0px; width: 0px; overflow: hidden;"><input id="bluetooth_receive" style="width: 0px; height: 0px;" onchange="receive();"></div></div>
+            <label class="toggle toggle-init">
+              <input type="checkbox" onchange="if(this.checked){$('#bluetooth_status').html('Sẵn sàng nhận quét'); document.getElementById('bluetooth_receive').focus();}else{$('#bluetooth_status').html('Đang chờ...');document.getElementById('bluetooth_receive').blur();}">
+              <span class="toggle-icon"></span>
+            </label>
+          </li>
+        </ul>
+      </div>
+      <div id="receive_list" class="block" style="display: none;">
+        <div class="card">
+          <div class="card-content card-content-padding">
+            <table width="100%">
+              <thead>
+                <tr>
+                  <th class="label-cell" align="left">Sản phẩm</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <br/>
+            <button class="col button button-big button-raised button-fill" @click="sendReport">Gửi báo cáo</button>
+          </div>
+        </div>
+      </div>
+      <div class="block-title">hoặc - Chọn thủ công</div>
+      <div class="block">
+        <div class="list components-list">
+          <ul>
+            {{#each $root.preload.categories}}
+            <li>
+              <a class="item-content item-link" @click="showProducts('{{this.id}}');">
+                <div class="item-media"><i class="icon icon-f7"></i></div>
+                <div class="item-inner">
+                  <div class="item-title">{{this.name}}</div>
+                </div>
+              </a>
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  return {
+    // Component Methods
+    methods: {
+      showToastBottom: function (text, closed) {
+        var self = this;
+        // Create toast
+        if (!self.toastBottom) {
+          self.toastBottom = self.$app.toast.create({
+            icon: self.$theme.ios ? '<i class="f7-icons">check</i>' : '<i class="material-icons">check</i>',
+            text: text,
+            position: 'center',
+            closeTimeout: 2000,
+            animate: true,
+            on:{
+              closed:closed
+            }
+          });
+        }
+        // Open it
+        self.toastBottom.open();
+      },
+      showProducts: function (categoryid) {
+        var self = this;
+        var $ = this.$;
+        var app = this.$app;
+        var router = this.$router;
+        router.navigate('/product/'+categoryid+'/');
+      },
+      sendReport: function(){
+        var self = this;
+        var $ = this.$;
+        var app = this.$app;
+        var router = this.$router;
+        var submitdata = {};
+        $('[data-buys]').each(function(i, e){
+            submitdata[$(e).data('buys')] = {'buys' : $(e).text()};
+        });
+        var token = localStorage.getItem("token");
+        app.request.post('http://pg.liveapps.top/index.php/app/bluetooth', { 
+            jsondata:JSON.stringify(submitdata), token: token
+        }, function (raw) {
+          try{
+            var json = JSON.parse(raw);
+            if(json.result=='success'){
+              self.showToastBottom('Báo cáo thành công', function(){
+                router.navigate('/status/', {reloadAll:true, ignoreCache:true});
+              });
+              return;
+            }
+            app.dialog.alert('Gửi báo cáo không thành công', 'Báo lỗi');
+          }
+          catch(e){
+            app.dialog.alert(raw, 'Báo lỗi');
+          return;
+          }
+        },function(){
+          app.dialog.alert('Vui lòng kiểm tra lại kết nối', 'Báo lỗi');
+        });
+        return;
+      },
+      scan: function() {
+        var self = this;
+        var $ = this.$;
+        var app = this.$app;
+        var router = this.$router;
+        try{
+        cordova.plugins.barcodeScanner.scan(
+          function (result) {
+            for(var id in self.$app.data.preload.byids){
+              if(self.$app.data.preload.byids[id].barcode==result.text){
+                router.navigate('/enterdata/'+id+'/');
+                return;
+              }
+            }
+            app.dialog.alert('Không tìm thấy sản phẩm này', 'Báo lỗi');
+          },
+          function (error) {
+              app.dialog.alert('Không thể đọc được mã', 'Báo lỗi');
+          },
+          {
+              preferFrontCamera : true, // iOS and Android
+              showFlipCameraButton : true, // iOS and Android
+              showTorchButton : true, // iOS and Android
+              torchOn: false, // Android, launch with the torch switched on (if available)
+              saveHistory: false, // Android, save scan history (default false)
+              prompt : "Chụp mã trên sản phẩm", // Android
+              resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
+              formats : "all", // default: all but PDF_417 and RSS_EXPANDED
+              orientation : "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
+              disableAnimations : false, // iOS
+              disableSuccessBeep: false // iOS and Android
+          }
+        );
+        }catch(e){app.dialog.alert(e.message);};
+      }
+    },
+    on: {
+      pageBeforeOut: function () {
+        var self = this;
+        self.$app.toast.close();
+      },
+      pageBeforeRemove: function () {
+        var self = this;
+        // Destroy toasts when page removed
+        if (self.toastBottom) self.toastBottom.destroy();
+      }
+    }
+  }
+</script>

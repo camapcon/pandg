@@ -1,0 +1,195 @@
+<template>
+  <div class="page">
+    <div class="navbar">
+      <div class="navbar-inner sliding">
+        <div class="left">
+          <a href="#" class="link back">
+            <i class="icon icon-back"></i>
+            <span class="ios-only">Quay lại</span>
+          </a>
+        </div>
+        <div class="title">Xin nghỉ phép</div>
+        <div class="right">
+          <a href="#" class="link icon-only panel-open" data-panel="right">
+            <i class="icon f7-icons ios-only">menu</i>
+            <i class="icon material-icons md-only">menu</i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="page-content grid-report">
+      <div class="list">
+        <ul>
+            <li>
+                <div class="item-content">
+                    <div class="item-inner">
+                        <div class="item-title">Hôm nay</div>
+                        <div class="item-after"> <span class="badge color-blue">&nbsp;</span></div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-inner">
+                        <div class="item-title">Chờ duyệt</div>
+                        <div class="item-after"> <span class="badge color-orange">&nbsp;</span></div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="item-content">
+                    <div class="item-inner">
+                        <div class="item-title">Đã duyệt</div>
+                        <div class="item-after"> <span class="badge color-green">&nbsp;</span></div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+      <div class="block-title">Nghỉ phép trong tháng</div>
+      <div class="block block-strong no-padding">
+        <div id="calendar-inline-container"></div>
+      </div>
+
+      <div class="block-title">Chọn ngày nghỉ phép</div>
+      <div class="block">
+        <div class="list no-hairlines-md">
+            <ul>
+              <li>
+                <div class="item-content item-input">
+                  <div class="item-inner">
+                    <div class="item-input-wrap">
+                      <input type="text" placeholder="Chọn ngày" readonly="readonly" id="calendar-default"/>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+        </div>
+        <p class="row">
+          <button class="col button button-big button-raised button-fill" @click="submit">Nộp đơn</button>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</template>
+<script>
+  return {
+    // Component Methods
+    methods: {
+      showToastBottom: function (text, closed) {
+        var self = this;
+        // Create toast
+        if (!self.toastBottom) {
+          self.toastBottom = self.$app.toast.create({
+            icon: self.$theme.ios ? '<i class="f7-icons">check</i>' : '<i class="material-icons">check</i>',
+            text: text,
+            position: 'center',
+            closeTimeout: 2000,
+            animate: true,
+            on:{
+              closed:closed
+            }
+          });
+        }
+        // Open it
+        self.toastBottom.open();
+      },
+      submit: function () {
+        var self = this;
+        var $ = this.$;
+        var app = this.$app;
+        var router = this.$router;
+        var token = localStorage.getItem("token");
+        app.request.post('http://pg.liveapps.top/index.php/app/submitleave', { 
+            day: $('#calendar-default').val(), 'token': token
+        }, function (raw) {
+          try{
+            if(raw.trim()=='success'){
+              self.showToastBottom('Nộp đơn thành công', function(){
+                router.back('/status/', {reloadAll:true, ignoreCache:true});
+              });
+              return;
+            }
+            app.dialog.alert('Nộp đơn không thành công', 'Báo lỗi');
+          }
+          catch(e){
+            app.dialog.alert(e.message, 'Báo lỗi');
+          return;
+          }
+        },function(){
+          app.dialog.alert('Vui lòng kiểm tra lại kết nối', 'Báo lỗi');
+        });
+      }
+    },
+    on: {
+      pageInit: function(e, page) {
+        var self = this;
+        var today = new Date();
+        var app = self.$app;
+        var $ = self.$;
+        self.calendarDefault = app.calendar.create({
+          inputEl: '#calendar-default',
+          closeOnSelect: true
+        });
+        var leaves = new Array();
+        for(var i in self.leaves)
+        {
+            var temp = self.leaves[i].date.split('-');
+            leaves.push({ color: self.leaves[i].color, date: new Date(temp[0], parseInt(temp[1])-1, temp[2])});
+        }
+        var monthNames = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+        self.calendarInline = app.calendar.create({
+          containerEl: '#calendar-inline-container',
+          events: leaves,
+          renderToolbar: function() {
+            return '<div class="toolbar calendar-custom-toolbar no-shadow">' +
+              '<div class="toolbar-inner">' +
+              '<div class="left">' +
+              '<a href="#" class="link icon-only"><i class="icon icon-back"></i></a>' +
+              '</div>' +
+              '<div class="center"></div>' +
+              '<div class="right">' +
+              '<a href="#" class="link icon-only"><i class="icon icon-forward"></i></a>' +
+              '</div>' +
+              '</div>' +
+              '</div>';
+          },
+          on: {
+            init: function(c) {
+              /*
+              $('.calendar-custom-toolbar .center').text(monthNames[c.currentMonth] + ', ' + c.currentYear);
+              $('.calendar-custom-toolbar .left .link').on('click', function() {
+                self.calendarInline.prevMonth();
+              });
+              $('.calendar-custom-toolbar .right .link').on('click', function() {
+                self.calendarInline.nextMonth();
+              });
+              */
+              for(var i in leaves)
+              {
+                  _date = leaves[i].date.getFullYear() + '-' + leaves[i].date.getMonth() + '-' + leaves[i].date.getDate();
+                  var obj = $('.calendar-day[data-date="'+_date+'"]');
+                  obj.html('<strong style="color:'+leaves[i].color+';">'+obj.text()+'</strong>');
+              }
+            },
+            monthYearChangeStart: function(c) {
+              $('.calendar-custom-toolbar .center').text(monthNames[c.currentMonth] + ', ' + c.currentYear);
+            }
+          }
+        });
+      },
+      pageBeforeOut: function () {
+        var self = this;
+        self.$app.toast.close();
+      },
+      pageBeforeRemove: function () {
+        var self = this;
+        // Destroy toasts when page removed
+        if (self.toastBottom) self.toastBottom.destroy();
+        self.calendarInline.destroy();
+      }
+    }
+  }
+</script>

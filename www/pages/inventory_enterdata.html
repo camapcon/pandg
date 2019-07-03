@@ -1,0 +1,153 @@
+<template>
+  <div class="page">
+    <div class="navbar">
+      <div class="navbar-inner sliding">
+        <a href="#" class="link back">
+          <i class="icon icon-back"></i>
+          <span class="ios-only">Quay lại</span>
+        </a>
+        <div class="title">Báo cáo tồn kho</div>
+        <div class="right">
+          <a href="#" class="link icon-only panel-open" data-panel="right">
+            <i class="icon f7-icons ios-only">menu</i>
+            <i class="icon material-icons md-only">menu</i>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="page-content" style="padding-bottom:200px;">
+      <input id="productid" type="hidden" value="{{productid}}"/>
+      <div class="list media-list no-ios-edges">
+          <ul>
+              <li class="item-content">
+                  <div class="item-inner">
+                      <div class="item-title-row">
+                          <div class="item-title">Sản phẩm báo cáo</div>
+                      </div>
+                      <div class="item-subtitle">{{name}}</div>
+                  </div>
+              </li>
+              <li class="item-content">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Số lượng tồn đầu</div>
+                    <div class="item-input-wrap">
+                      <input id="stocks1" type="number" placeholder="Nhập số lượng hàng">
+                      <span class="input-clear-button"></span>
+                    </div>
+                  </div>
+              </li>
+              <li class="item-content">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Số lượng tồn cuối</div>
+                    <div class="item-input-wrap">
+                      <input id="stocks2" type="number" placeholder="Nhập số lượng hàng">
+                      <span class="input-clear-button"></span>
+                    </div>
+                  </div>
+              </li>
+          </ul>
+        
+          <div class="block">
+            <p class="row">
+              <button class="col button button-big button-raised button-fill" @click="submit">Gửi báo cáo</button>
+            </p>
+          </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  return {
+    // Component Methods
+    methods: {
+      showToastBottom: function (text, closed) {
+        var self = this;
+        // Create toast
+        if (!self.toastBottom) {
+          self.toastBottom = self.$app.toast.create({
+            icon: self.$theme.ios ? '<i class="f7-icons">check</i>' : '<i class="material-icons">check</i>',
+            text: text,
+            position: 'center',
+            closeTimeout: 2000,
+            animate: true,
+            on:{
+              closed:closed
+            }
+          });
+        }
+        // Open it
+        self.toastBottom.open();
+      },
+      submit: function () {
+        var self = this;
+        var $ = this.$;
+        var app = this.$app;
+        var router = this.$router;
+        var token = localStorage.getItem("token");
+        var productid = $('#productid').val();
+        var stocks1 = $('#stocks1').val();
+        var stocks2 = $('#stocks2').val();
+        if(stocks1==''){
+          app.dialog.alert('Vui lòng nhập số lượng tồn đầu', 'Nhắc nhở');
+          return;
+        }
+        if(stocks2==''){
+          app.dialog.alert('Vui lòng nhập số lượng tồn cuối', 'Nhắc nhở');
+          return;
+        }
+        app.request.post('http://scj.liveapps.top/index.php/app/inventory', { 
+            productid:productid, stocks1:stocks1, stocks2:stocks2, token:token
+        }, function (raw) {
+          try{
+            var json = JSON.parse(raw);
+            if(json.result=='success'){
+              self.showToastBottom('Báo cáo thành công', function(){
+                router.back('/inventory_product/'+self.categoryid, {reloadAll:true, ignoreCache:true});
+              });
+              return;
+            }
+            /*
+            if(json.result=='already'){
+              self.showToastBottom('Báo cáo bị trùng', function(){
+                router.back('/product/'+self.categoryid, {reloadAll:true, ignoreCache:true});
+              });
+              return;
+            }
+            */
+            app.dialog.alert('Gửi báo cáo không thành công', 'Báo lỗi');
+          }
+          catch(e){
+            app.dialog.alert('Vui lòng cập nhật phiên bản mới', 'Báo lỗi');
+          return;
+          }
+        },function(){
+          app.dialog.alert('Vui lòng kiểm tra lại kết nối', 'Báo lỗi');
+        });
+      }
+    },
+    // Component Data
+    data: function () {
+      var product = this.$app.data.preload.byids[this.$route.params.productid];
+      return {
+        productid: this.$route.params.productid,
+        name:product.sku_vi,
+        category:product.category,
+        categoryid:product.categoryid,
+        brand:product.brand,
+        uom:product.uom,
+        reasons: this.$app.data.preload.reasons
+      }
+    },
+    on: {
+      pageBeforeOut: function () {
+        var self = this;
+        self.$app.toast.close();
+      },
+      pageBeforeRemove: function () {
+        var self = this;
+        // Destroy toasts when page removed
+        if (self.toastBottom) self.toastBottom.destroy();
+      }
+    }
+  }
+</script>
