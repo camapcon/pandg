@@ -187,20 +187,26 @@ function onDeviceReady() {
 }
 
 function receive(){
-  var barcode = $('#bluetooth_receive').val().trim();
-  if(barcode=='') return;
+  var barcodes = $('#bluetooth_receive').val().trim();
+  if(barcodes=='') return;
+  barcodes = barcodes.split("\n");
+  $('#receive_list tbody').html("");
   for(var id in app.data.preload.byids){
     //console.log(app.data.preload.byids[id].barcode);
-    if(app.data.preload.byids[id].barcode==barcode){
-      if($('#receive_list [data-buys="'+id+'"]').length > 0)
-      {
-        $('#receive_list [data-buys="'+id+'"]').html(parseInt($('#receive_list [data-buys="'+id+'"]').text()) + 1);
+    for(var i in barcodes)
+    {
+      var barcode = barcodes[i].trim();
+      if(app.data.preload.byids[id].barcode==barcode){
+        if($('#receive_list [data-buys="'+id+'"]').length > 0)
+        {
+          $('#receive_list [data-buys="'+id+'"]').html(parseInt($('#receive_list [data-buys="'+id+'"]').text()) + 1);
+        }
+        else
+          $('#receive_list tbody').append('<tr><td class="label-cell" align="left">'+app.data.preload.byids[id].sku+' <span class="badge buys color-orange" style="float:right; font-weight:bold;" data-buys="'+id+'">1</span></td></tr>');
       }
-      else
-        $('#receive_list tbody').append('<tr><td class="label-cell" align="left">'+app.data.preload.byids[id].sku+' <span class="badge buys color-orange" style="float:right; font-weight:bold;" data-buys="'+id+'">1</span></td></tr>');
     }
   }
-  $('#bluetooth_receive').val("");
+  //$('#bluetooth_receive').val("");
   $('#receive_list').show();
 }
 
