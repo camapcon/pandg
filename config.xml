@@ -78,9 +78,19 @@
       <splash src="res/screen/ios/Default@2x~ipad~anyany.png"/>
       <splash src="res/screen/ios/Default@2x~ipad~comany.png"/>
       
-      <edit-config target="NSLocationWhenInUseUsageDescription" file="*-Info.plist" mode="merge">
-        <string>Need location access to checkin</string>
+      <edit-config target="NSLocationWhenInUseUsageDescription" file="*-Info.plist" mode="overwrite">
+        <string>Need location access to checkin a working day, to make sure the user work in supermarkets.</string>
       </edit-config>
+      <edit-config target="NSLocationAlwaysUsageDescription" file="*-Info.plist" mode="overwrite">
+        <string>To make sure the user stay in supermarkets after checkin and before checkout.</string>
+      </edit-config>
+      <edit-config target="NSPhotoLibraryUsageDescription" file="*-Info.plist" mode="overwrite">
+        <string>Need photo library to upload photos of sales activities.</string>
+      </edit-config>
+      <edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="overwrite">
+        <string>Need camera to selfie and take photos of sales activities.</string>
+      </edit-config>
+        
     </platform>
     <platform name="android">
       <preference name="android-minSdkVersion" value="24"/>
