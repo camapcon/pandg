@@ -199,6 +199,8 @@ var routes = [
                 sum_reports:json.sum_reports,
                 empty_reports:json.reports.length==0,
                 workday:json.workday,
+                rank:json.rank,
+                allpgs:json.allpgs,
                 notyet: json.reach < json.target * 0.7,
                 almost: json.reach >= json.target * 0.7 && json.reach < json.target,
                 reached: json.reach >= json.target,
@@ -211,7 +213,7 @@ var routes = [
           );
         }
         catch(e){
-          app.dialog.alert('Vui lòng cập nhật phiên bản mới', 'Báo lỗi');
+          app.dialog.alert(e.message, 'Báo lỗi');
           return;
         }
       },function(){
