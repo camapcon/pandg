@@ -94,6 +94,7 @@
         
     </platform>
     <platform name="android">
+      <uses-permission android:name="android.permission.INTERNET" />
       <preference name="android-minSdkVersion" value="16"/>
       <preference name="android-targetSdkVersion" value="28"/>
       <preference name="SplashMaintainAspectRatio" value="true"/>
