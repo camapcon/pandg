@@ -114,7 +114,6 @@
     </platform>
     
     <access origin="*" />
-    <uses-permission android:name="android.permission.INTERNET" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
