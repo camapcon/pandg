@@ -95,9 +95,9 @@
             app.dialog.alert('Vui lòng cập nhật phiên bản mới', 'Báo lỗi');
           return;
           }
-        },function(err){
-          app.dialog.alert('Vui lòng kiểm tra lại kết nối', 'Báo lỗi');
-          app.dialog.alert(JSON.stringify(err), 'Báo lỗi');
+        },function(xhr, status){
+          //app.dialog.alert('Vui lòng kiểm tra lại kết nối', 'Báo lỗi');
+          app.dialog.alert(status, 'Báo lỗi');
         });
       },
     }
