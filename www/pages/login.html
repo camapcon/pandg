@@ -97,7 +97,7 @@
           }
         },function(err){
           app.dialog.alert('Vui lòng kiểm tra lại kết nối', 'Báo lỗi');
-          app.dialog.alert(err, 'Báo lỗi');
+          app.dialog.alert(JSON.stringify(err), 'Báo lỗi');
         });
       },
     }
