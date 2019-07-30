@@ -201,13 +201,18 @@ var routes = [
                 workday:json.workday,
                 rank:json.rank,
                 allpgs:json.allpgs,
-                notyet: json.reach < json.target * 0.7,
-                almost: json.reach >= json.target * 0.7 && json.reach < json.target,
-                reached: json.reach >= json.target,
+                notyet: json.todate_reach < json.todate_target * 0.7,
+                almost: json.todate_reach >= json.todate_target * 0.7 && json.todate_reach < json.todate_target,
+                reached: json.todate_reach >= json.todate_target,
                 reach: number_format(json.reach, 0, '.', '.'),
                 target: number_format(json.target, 0, '.', '.'),
+                month_target: number_format(json.month_target, 0, '.', '.'),
+                todate_reach: number_format(json.todate_reach, 0, '.', '.'),
+                todate_target: number_format(json.todate_target, 0, '.', '.'),
                 needmore: number_format(Math.abs(json.target-json.reach), 0, '.', '.'),
-                needmore_percent: number_format(Math.abs(json.target-json.reach)/json.target*100, 1, '.', '.')
+                day_reach_percent: number_format(json.reach/json.target*100, 1, '.', '.'),
+                todate_needmore: number_format(Math.abs(json.todate_target-json.todate_reach), 0, '.', '.'),
+                todate_reach_percent: number_format(json.todate_reach/json.todate_target*100, 1, '.', '.')
               }
             }
           );

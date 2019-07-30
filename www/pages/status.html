@@ -12,11 +12,12 @@
       </div>
     </div>
     <div class="page-content bg-gradient">
-      <div class="block" style="text-align:center; padding-bottom: 0px; width: 100%;">
+      <!--div class="block" style="text-align:center; padding-bottom: 0px; width: 100%;">
         <div class="row" style="text-align:center; margin: auto; width: 200px;">
           <img src="img/pandg.png" width="200"/>
         </div>
-      </div>
+      </div-->
+      <div class="block-title">Thống kê tháng</div>
       <div class="card">
         <div class="list media-list no-ios-edges">
           <div class="list">
@@ -28,9 +29,9 @@
                   <div class="item-inner">
                     <div class="item-title-row">
                       <div class="item-title">Cố gắng lên</div>
-                      <div class="item-after"><strong><span class="badge color-blue"><span class="current-reach">{{reach}}</span> / <span class="daytarget">{{target}}</span></span></strong></div>
+                        <div class="item-after"><strong><span class="badge float-right">Thiếu <span class="reach-delta">{{todate_needmore}}</span>đ</span></strong></div>
                     </div>
-                    <div class="item-subtitle text-color-blue"><strong>Cần thêm <span class="reach-delta">{{needmore}}</span>đ ({{needmore_percent}}%)</strong></div>
+                    <div class="item-subtitle"><strong><span class="badge color-blue"><span class="current-reach">{{todate_reach}}</span> / <span class="daytarget">{{todate_target}}</span> ({{todate_reach_percent}}%)</span></strong></div>
                   </div>
                 </div>
               </li>
@@ -42,9 +43,9 @@
                   <div class="item-inner">
                     <div class="item-title-row">
                       <div class="item-title">Gần đạt rồi</div>
-                      <div class="item-after"><strong><span class="badge color-orange"><span class="current-reach">{{reach}}</span> / <span class="daytarget">{{target}}</span></span></strong></div>
+                      <div class="item-after"><strong><span class="badge float-right">Thiếu <span class="reach-delta">{{todate_needmore}}</span>đ</span></strong></div>
                     </div>
-                    <div class="item-subtitle text-color-blue"><strong>Cần thêm <span class="reach-delta">{{needmore}}</span>đ ({{needmore_percent}}%)</strong></div>
+                    <div class="item-subtitle"><strong><span class="badge color-orange"><span class="current-reach">{{todate_reach}}</span> / <span class="daytarget">{{todate_target}}</span> ({{todate_reach_percent}}%)</span></strong></div>
                   </div>
                 </div>
               </li>
@@ -56,9 +57,9 @@
                   <div class="item-inner">
                     <div class="item-title-row">
                       <div class="item-title">Chúc mừng bạn</div>
-                      <div class="item-after"><strong><span class="badge color-green"><span class="current-reach">{{reach}}</span> / <span class="daytarget">{{target}}</span></span></strong></div>
+                      <div class="item-after"><strong><span class="badge float-right">Vượt <span class="reach-delta">{{todate_needmore}}</span>đ</span></strong></div>
                     </div>
-                    <div class="item-subtitle text-color-blue"><strong>Đang vượt <span class="reach-delta">{{needmore}}</span>đ ({{needmore_percent}}%)</strong></div>
+                    <div class="item-subtitle"><strong><span class="badge color-green"><span class="current-reach">{{todate_reach}}</span> / <span class="daytarget">{{todate_target}}</span> ({{todate_reach_percent}}%)</span></strong></div>
                   </div>
                 </div>
               </li>
@@ -70,6 +71,25 @@
                     <div class="item-title-row">
                       <div class="item-title" style="line-height: 48px;">Xếp hạng</div>
                       <div class="item-after"><strong><span class="badge"><span>{{rank}}</span> / <span>{{allpgs}}</span></span></strong></div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="block-title">Thống kê hôm nay</div>
+      <div class="card">
+        <div class="list media-list no-ios-edges">
+          <div class="list">
+            <ul>
+              <li>
+                <div class="item-content">
+                  <div class="item-media"><i class="f7-icons">money_dollar_round</i></div>
+                  <div class="item-inner">
+                    <div class="item-title-row">
+                      <div class="item-title"><strong><span class="badge color-blue" style="margin-top: 15px;"><span class="current-reach">{{reach}}</span> / <span class="daytarget">{{target}}</span> ({{day_reach_percent}}%)</span></strong></div>
                     </div>
                   </div>
                 </div>
@@ -110,6 +130,15 @@
                       </div>
                   </li>
                   <li class="item-content">
+                      <div class="item-media"><i class="f7-icons">favorites</i></div>
+                      <div class="item-inner">
+                          <div class="item-title-row">
+                              <div class="item-title">Chỉ tiêu tháng</div>
+                          </div>
+                          <div class="item-subtitle">{{month_target}}đ</div>
+                      </div>
+                  </li>
+                  <li class="item-content">
                       <div class="item-media"><i class="f7-icons">check_round</i></div>
                       <div class="item-inner">
                           <div class="item-title-row">
@@ -146,10 +175,9 @@
           <table>
             <thead>
               <tr>
-                <th width="45%" class="label-cell" align="left">Sản phẩm</th>
+                <th width="65%" class="label-cell" align="left">Sản phẩm</th>
                 <th class="numeric-cell" align="center" style="white-space:nowrap;">Tiếp cận</th>
                 <th class="numeric-cell" align="center">Mua</th>
-                <th class="numeric-cell" align="center" style="white-space:nowrap;">Trưng bày</th>
               </tr>
             </thead>
             <tbody>
@@ -158,20 +186,18 @@
                 <td class="label-cell" align="left">{{this.product}}</td>
                 <td class="numeric-cell" align="center"><span class="badge color-blue">{{this.views}}</span></td>
                 <td class="numeric-cell" align="center"><span class="badge color-blue">{{this.buys}}</span></td>
-                <td class="numeric-cell" align="center"><span class="badge color-blue">{{this.display}}</span></td>
               </tr>
               {{else}}
               <tr>
-                <td class="label-cell text-color-red" colspan="4" align="center" style="padding:10px;">Bạn chưa gửi báo cáo nào trong hôm nay</td>
+                <td class="label-cell text-color-red" colspan="3" align="center" style="padding:10px;">Bạn chưa gửi báo cáo nào trong hôm nay</td>
               </tr>
               {{/each}}
               {{#if empty_reports}}
               {{else}}
               <tr>
-                <th width="45%" class="label-cell" align="left">Tổng:</th>
+                <th width="65%" class="label-cell" align="left">Tổng:</th>
                 <th class="numeric-cell" align="center"><span class="badge color-orange">{{sum_reports.views}}</span></th>
                 <th class="numeric-cell" align="center"><span class="badge color-orange">{{sum_reports.buys}}</span></th>
-                <th class="numeric-cell" align="center"><span class="badge color-orange">{{sum_reports.display}}</span></th>
               </tr>
               {{/if}}
             </tbody>

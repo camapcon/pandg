@@ -106,8 +106,8 @@
         var buyers = $('#buyers').val();
         var buys = $('#buys').val();
         var display = 0;
-        if(views=='' || buyers=='' || buys==''){
-          app.dialog.alert('Vui lòng nhập đủ số liệu báo cáo', 'Nhắc nhở');
+        if(views=='' && buyers=='' && buys==''){
+          app.dialog.alert('Vui lòng nhập số liệu cần báo cáo', 'Nhắc nhở');
           return;
         }
         if(parseInt(views) < parseInt(buyers)){
