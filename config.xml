@@ -119,7 +119,7 @@
         <allow-intent href="mailto:*" />
         <allow-intent href="geo:*" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-            <application android:usesCleartextTraffic="true" />
+            <application android:networkSecurityConfig="@xml/network_security_config"/>
         </edit-config>
     </platform>
     
