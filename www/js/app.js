@@ -23,18 +23,26 @@ var app = new Framework7({
   data: function () {
     return {
       preload: {},
+      cache: {},
       checkin: '',
       checkout: ''
     };
   },
   methods: {
-    checkin: function () {
+    checkin: function (recheckin) {
+      recheckin = recheckin || false;
       app.panel.close();
       var router = app.router;
       var token = localStorage.getItem("token");
-      if(app.data.checkin!=''){
-        app.dialog.alert('Bạn đã checkin hôm nay rồi', 'Thông báo');
-        return;
+      if(!recheckin){
+          if(app.data.checkin!=''){
+            if(app.data.checkout==''){
+                app.dialog.alert('Đã checkin rồi và bạn vẫn chưa checkout ca này', 'Thông báo');
+                return;
+            }
+            app.dialog.confirm('Đã checkin rồi, bạn muốn checkin tiếp không?', 'Thông báo', function(){app.methods.checkin(true);}, function(){});
+            return;
+          }
       }
       navigator.camera.getPicture(function(fileURI){
         var options = new FileUploadOptions();
@@ -57,11 +65,14 @@ var app = new Framework7({
             app.dialog.alert('Không gửi được hình chụp từ Camera', 'Báo lỗi');
             return;
           }
+          /*
           if(raw.response=='already'){
             app.dialog.alert('Bạn đã checkin hôm nay rồi', 'Thông báo');
             return;
           }
+          */
           app.dialog.alert('Ghi nhận lúc ' + raw.response, 'Checkin thành công', function(){
+            app.data.checkout = '';
             router.navigate('/status/', {reloadAll:true, reloadCurrent: true, ignoreCache:true});
           });
         }, function(error){
@@ -86,10 +97,6 @@ var app = new Framework7({
         app.dialog.alert('Bạn vẫn chưa checkin hôm nay', 'Thông báo');
         return;
       }
-      if(app.data.checkout!=''){
-        app.dialog.alert('Bạn đã checkout hôm nay rồi', 'Thông báo');
-        return;
-      }
       app.request.post('http://pg.liveapps.top/index.php/app/checkout/', { token:token }, function (raw) {
         if(raw=='invalid'){
           app.dialog.alert('Phiên làm việc đã hết hạn', 'Báo lỗi', function(){
@@ -107,9 +114,11 @@ var app = new Framework7({
           if(json.result=='nocheckin'){
             app.dialog.alert('Bạn vẫn chưa checkin hôm nay', 'Thông báo');
           }
+          /*
           if(json.result=='already'){
             app.dialog.alert('Bạn đã checkout hôm nay rồi', 'Thông báo');
           }
+          */
         }
         catch(e){
           app.dialog.alert('Vui lòng cập nhật phiên bản mới', 'Báo lỗi');

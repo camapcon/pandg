@@ -31,7 +31,7 @@
                   <div class="item-inner">
                     <div class="item-title item-label">Số tiếp cận</div>
                     <div class="item-input-wrap">
-                      <input id="views" type="number" placeholder="Nhập số người">
+                      <input id="views" type="number" placeholder="Nhập số người" value="{{cache_views}}">
                       <span class="input-clear-button"></span>
                     </div>
                   </div>
@@ -40,7 +40,7 @@
                   <div class="item-inner">
                     <div class="item-title item-label">Số người mua</div>
                     <div class="item-input-wrap">
-                      <input id="buyers" type="number" placeholder="Nhập số người">
+                      <input id="buyers" type="number" placeholder="Nhập số người" value="{{cache_buyers}}">
                       <span class="input-clear-button"></span>
                     </div>
                   </div>
@@ -106,6 +106,19 @@
         var buyers = $('#buyers').val();
         var buys = $('#buys').val();
         var display = 0;
+        var product = app.data.preload.byids[productid];
+        if(views!=''){
+            if(typeof(app.data.cache[product.brand])=='undefined')
+                app.data.cache[product.brand] = { views: views };
+            else
+                app.data.cache[product.brand]['views'] = views;
+        }
+        if(buyers!=''){
+            if(typeof(app.data.cache[product.brand])=='undefined')
+                app.data.cache[product.brand] = { buyers: buyers };
+            else
+                app.data.cache[product.brand]['buyers'] = buyers;
+        }
         if(views=='' && buyers=='' && buys==''){
           app.dialog.alert('Vui lòng nhập số liệu cần báo cáo', 'Nhắc nhở');
           return;
@@ -153,7 +166,9 @@
         category:product.category,
         categoryid:product.categoryid,
         brand:product.brand,
-        uom:product.uom
+        uom:product.uom,
+        cache_views:typeof(this.$app.data.cache[product.brand])!='undefined' ? this.$app.data.cache[product.brand]['views'] : '',
+        cache_buyers:typeof(this.$app.data.cache[product.brand])!='undefined' ? this.$app.data.cache[product.brand]['buyers'] : ''
       }
     },
     on: {
