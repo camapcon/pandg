@@ -25,7 +25,7 @@
       <div class="list simple-list">
         <ul>
           <li>
-            <div><span id="bluetooth_status">Đang chờ...</span><div style="height:0px; width: 0px; overflow: hidden;"><input id="bluetooth_receive" style="width: 0px; height: 0px;" onchange="receive();"></div></div>
+              <div><span id="bluetooth_status">Đang chờ...</span></div>
             <label class="toggle toggle-init">
               <input type="checkbox" onchange="if(this.checked){$('#bluetooth_status').html('Sẵn sàng nhận quét'); document.getElementById('bluetooth_receive').focus();}else{$('#bluetooth_status').html('Đang chờ...');document.getElementById('bluetooth_receive').blur();}">
               <span class="toggle-icon"></span>
@@ -66,6 +66,7 @@
           </ul>
         </div>
       </div>
+      <div><textarea id="bluetooth_receive" onchange="receive();"></textarea></div>
     </div>
   </div>
 </template>

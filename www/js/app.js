@@ -195,20 +195,66 @@ function onDeviceReady() {
   });
 }
 
-function receive(){
-  var barcode = $('#bluetooth_receive').val().trim();
-  if(barcode=='') return;
-  for(var id in app.data.preload.byids){
-    //console.log(app.data.preload.byids[id].barcode);
-    if(app.data.preload.byids[id].barcode==barcode){
-      if($('#receive_list [data-buys="'+id+'"]').length > 0)
-      {
-        $('#receive_list [data-buys="'+id+'"]').html(parseInt($('#receive_list [data-buys="'+id+'"]').text()) + 1);
-      }
-      else
-        $('#receive_list tbody').append('<tr><td class="label-cell" align="left">'+app.data.preload.byids[id].sku+' <span class="badge buys color-orange" style="float:right; font-weight:bold;" data-buys="'+id+'">1</span></td></tr>');
+function getCursorPosition(input) {
+    if (!input) return -1; // No (input) element found
+    if ('selectionStart' in input) {
+        // Standard-compliant browsers
+        return input.selectionStart;
+    } else if (document.selection) {
+        // IE
+        input.focus();
+        var sel = document.selection.createRange();
+        var selLen = document.selection.createRange().text.length;
+        sel.moveStart('character', -input.value.length);
+        return sel.text.length - selLen;
     }
+}
+
+var receive_length = 0;
+var receive_check = null;
+function receive(){
+  var barcode = document.getElementById('bluetooth_receive').value;//$('#bluetooth_receive').val();
+  if(receive_check == null && barcode!='')
+    receive_check = setTimeout(receive_listener, 500);
+}
+
+function receive_listener(){
+  var barcode = document.getElementById('bluetooth_receive').value;//$('#bluetooth_receive').val();
+  //alert(getCursorPosition(document.getElementById('bluetooth_receive')));
+  if(barcode==''){
+      clearTimeout(receive_check);
+      receive_check = null;
+      receive_length = 0;
+      return;
   }
+  if(barcode.length != receive_length){
+      receive_length = barcode.length;
+      receive_check = setTimeout(receive_listener, 1000);
+      return;
+  }
+  //render
+  var barcodes = barcode.split("\n");
+  for(var i=0; i<barcodes.length; i++){
+      barcode = barcodes[i];
+      if(window.cordova.platformId=='android'){
+          //barcode = barcode.split("").reverse().join("");
+      }
+      for(var id in app.data.preload.byids){
+        //console.log(app.data.preload.byids[id].barcode);
+        if(app.data.preload.byids[id].barcode==barcode){
+          if($('#receive_list [data-buys="'+id+'"]').length > 0)
+          {
+            $('#receive_list [data-buys="'+id+'"]').html(parseInt($('#receive_list [data-buys="'+id+'"]').text()) + 1);
+          }
+          else
+            $('#receive_list tbody').append('<tr><td class="label-cell" align="left">'+app.data.preload.byids[id].sku+' <span class="badge buys color-orange" style="float:right; font-weight:bold;" data-buys="'+id+'">1</span></td></tr>');
+        }
+      }
+  }
+  //cleanup
+  clearTimeout(receive_check);
+  receive_check = null;
+  receive_length = 0;
   $('#bluetooth_receive').val("");
   $('#receive_list').show();
 }
