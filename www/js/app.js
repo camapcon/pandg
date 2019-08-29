@@ -4,6 +4,7 @@ var $ = Dom7;
 var lat = '';
 var lng = '';
 var demotime = 1;
+var reported = null;
 
 // Theme
 var theme = 'auto';
@@ -89,12 +90,21 @@ var app = new Framework7({
          sourceType: Camera.PictureSourceType.CAMERA
       });
     },
-    checkout: function () {
+    checkout: function (confirm) {
+      confirm = confirm || false;
       app.panel.close();
       var router = app.router;
       var token = localStorage.getItem("token");
+      if(!confirm){
+          app.dialog.confirm('Bạn có muốn checkout không?', 'Thông báo', function(){app.methods.checkout(true);}, function(){});
+          return;
+      }
       if(app.data.checkin==''){
         app.dialog.alert('Bạn vẫn chưa checkin hôm nay', 'Thông báo');
+        return;
+      }
+      if(reported!=new Date().toDateString()){
+        app.dialog.alert('Bạn vẫn chưa gửi báo cáo hôm nay', 'Thông báo');
         return;
       }
       app.request.post('http://pg.liveapps.top/index.php/app/checkout/', { token:token }, function (raw) {

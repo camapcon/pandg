@@ -136,6 +136,7 @@
               self.showToastBottom('Báo cáo thành công', function(){
                 router.back('/product/'+self.categoryid, {reloadAll:true, ignoreCache:true});
               });
+              reported = new Date().toDateString();
               return;
             }
             /*
