@@ -5,7 +5,7 @@
     <author email="phu.tran@impression.com.vn" href="http://pg.liveapps.top">MKA</author>
     <content src="index.html" />
   
-    <preference name="phonegap-version" value="cli-7.1.0" />
+    <preference name="phonegap-version" value="cli-9.0.0" />
     <preference name="target-device" value="handset" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <!--preference name="android-build-tool" value="gradle" /-->
