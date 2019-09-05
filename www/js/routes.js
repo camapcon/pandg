@@ -1,11 +1,3 @@
-function requireCheckin(routeTo, routeFrom, resolve, reject) {
-  if (app.data.checkin != '') 
-    resolve();
-  else{
-    app.dialog.alert('Bạn vẫn chưa checkin hôm nay', 'Thông báo');
-    reject();
-  }
-}
 var routes = [
   // Index page
   {
@@ -16,8 +8,7 @@ var routes = [
   {
     path: '/photo/',
     componentUrl: './pages/photo.html',
-    name: 'photo',
-    beforeEnter: requireCheckin
+    name: 'photo'
   },
   // Login page
   {
@@ -29,15 +20,13 @@ var routes = [
   {
     path: '/report/',
     componentUrl: './pages/report.html',
-    name: 'report',
-    beforeEnter: requireCheckin
+    name: 'report'
   },
   // Outstock Report page
   {
     path: '/outstock_report/',
     componentUrl: './pages/outstock_report.html',
-    name: 'outstock_report',
-    beforeEnter: requireCheckin
+    name: 'outstock_report'
   },
   // Outstock Product page
   {
@@ -59,8 +48,7 @@ var routes = [
   {
     path: '/inventory_report/',
     componentUrl: './pages/inventory_report.html',
-    name: 'inventory_report',
-    beforeEnter: requireCheckin
+    name: 'inventory_report'
   },
   {
     name: 'inventory_product',
@@ -183,6 +171,14 @@ var routes = [
           app.data.checkout = json.checkout;
           json.reach = parseInt(json.reach);
           json.target = parseInt(json.target);
+          if(json.reports.length > 0){
+            reported = new Date().toDateString();
+            for(var i in json.reports){
+              if(typeof(reported_buys[json.reports[i].brand])=='undefined')
+                reported_buys[json.reports[i].brand] = {};
+              reported_buys[json.reports[i].brand][json.reports[i].productid] = parseInt(json.reports[i].buys);
+            }
+          }
           resolve(
             {
               componentUrl: './pages/status.html',
@@ -196,6 +192,7 @@ var routes = [
                 checkin: json.checkin!='' ? json.checkin : '<span class="text-color-red">Bạn chưa checkin</span>',
                 checkout:json.checkout!='' ? json.checkout : '<span class="text-color-red">Bạn chưa checkout</span>',
                 reports:json.reports,
+                brand_reports:json.brand_reports,
                 sum_reports:json.sum_reports,
                 empty_reports:json.reports.length==0,
                 workday:json.workday,
@@ -240,6 +237,11 @@ var routes = [
     name: 'enterdata',
     path: '/enterdata/:productid/',
     componentUrl: './pages/enterdata.html'
+  },
+  {
+    name: 'reach',
+    path: '/reach/',
+    componentUrl: './pages/reach.html'
   },
   {
     path: '(.*)',

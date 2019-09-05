@@ -5,6 +5,7 @@ var lat = '';
 var lng = '';
 var demotime = 1;
 var reported = null;
+var reported_buys = {};
 
 // Theme
 var theme = 'auto';
@@ -43,6 +44,9 @@ var app = new Framework7({
             }
             app.dialog.confirm('Đã checkin rồi, bạn muốn checkin tiếp không?', 'Thông báo', function(){app.methods.checkin(true);}, function(){});
             return;
+          }
+          else{
+            reported_buys = {};
           }
       }
       navigator.camera.getPicture(function(fileURI){
@@ -103,8 +107,8 @@ var app = new Framework7({
         app.dialog.alert('Bạn vẫn chưa checkin hôm nay', 'Thông báo');
         return;
       }
-      if(reported!=new Date().toDateString()){
-        app.dialog.alert('Bạn vẫn chưa gửi báo cáo hôm nay', 'Thông báo');
+      if(reported==null || reported!=new Date().toDateString()){
+        app.dialog.alert('Bạn chưa báo cáo bán hàng hôm nay', 'Thông báo');
         return;
       }
       app.request.post('http://pg.liveapps.top/index.php/app/checkout/', { token:token }, function (raw) {
@@ -168,6 +172,19 @@ $(document).on('page:init', function (e) {
 
 $(document).on('click', '.require-checkin', function (e) {
   if (app.data.checkin == ''){
+    app.dialog.alert('Bạn vẫn chưa checkin hôm nay', 'Thông báo');
+    setTimeout(function(){mainView.router.back('/status/', {reloadAll:true, ignoreCache:true});}, 1000);
+  }
+});
+
+$(document).on('click', '.require-checkin-report', function (e) {
+  if (app.data.checkin != ''){
+    if(reported==null || reported!=new Date().toDateString()){
+      app.dialog.alert('Bạn phải báo cáo bán hàng trước khi báo tiếp cận', 'Thông báo');
+      setTimeout(function(){mainView.router.back('/status/', {reloadAll:true, ignoreCache:true});}, 1000);
+    }
+  }
+  else{
     app.dialog.alert('Bạn vẫn chưa checkin hôm nay', 'Thông báo');
     setTimeout(function(){mainView.router.back('/status/', {reloadAll:true, ignoreCache:true});}, 1000);
   }
