@@ -171,6 +171,9 @@ var routes = [
           app.data.checkout = json.checkout;
           json.reach = parseInt(json.reach);
           json.target = parseInt(json.target);
+          if(15 < parseInt(json.version)){
+            app.dialog.alert('Bạn đang dùng app cũ, vui lòng tải bản mới!', 'Thông báo');
+          }
           if(json.reports.length > 0){
             reported = new Date().toDateString();
             for(var i in json.reports){
