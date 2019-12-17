@@ -162,6 +162,7 @@ if(token){
 else{
   mainView.router.navigate('/login/', {reloadAll:true, ignoreCache:true});
 }
+alert('1');
 
 $(document).on('page:init', function (e) {
   // Page Data contains all required information about loaded and initialized page
@@ -195,6 +196,7 @@ $(document).on('page:init', '.page[data-name="login"]', function (e) {
 });
 
 app.init();
+alert('2');
 
 //preload some data
 app.request.post('http://pg.liveapps.top/index.php/app/allproducts', {}, function (raw) {
