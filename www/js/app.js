@@ -162,7 +162,6 @@ if(token){
 else{
   mainView.router.navigate('/login/', {reloadAll:true, ignoreCache:true});
 }
-alert('1');
 
 $(document).on('page:init', function (e) {
   // Page Data contains all required information about loaded and initialized page
@@ -196,7 +195,6 @@ $(document).on('page:init', '.page[data-name="login"]', function (e) {
 });
 
 app.init();
-alert('2');
 
 //preload some data
 app.request.post('http://pg.liveapps.top/index.php/app/allproducts', {}, function (raw) {
@@ -222,7 +220,6 @@ function onDeviceReady() {
   }, function(error) {
       app.dialog.alert('Không thể xác định vị trí của bạn', 'Lỗi GPS');
   });
-  alert('3');
 }
 
 function getCursorPosition(input) {
@@ -322,4 +319,3 @@ function number_format (number, decimals, decPoint, thousandsSep) {
 
   return s.join(dec)
 }
-alert('4');
