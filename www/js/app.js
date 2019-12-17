@@ -222,6 +222,7 @@ function onDeviceReady() {
   }, function(error) {
       app.dialog.alert('Không thể xác định vị trí của bạn', 'Lỗi GPS');
   });
+  alert('3');
 }
 
 function getCursorPosition(input) {
@@ -321,3 +322,4 @@ function number_format (number, decimals, decPoint, thousandsSep) {
 
   return s.join(dec)
 }
+alert('4');
