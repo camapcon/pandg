@@ -2,7 +2,7 @@
   <div class="page">
     <div class="navbar">
       <div class="navbar-inner sliding">
-        <div class="title">Tổng quan (v1.3)</div>
+        <div class="title">Tổng quan (v1.5)</div>
         <div class="right">
           <a href="#" class="link icon-only panel-open" data-panel="right">
             <i class="icon f7-icons ios-only">menu</i>
@@ -172,34 +172,59 @@
       <div class="card">
         <div class="card-header">Báo cáo hôm nay</div>
         <div class="card-content card-content-padding">
-          <table>
+          <table width="100%">
             <thead>
               <tr>
                 <th width="65%" class="label-cell" align="left">Sản phẩm</th>
-                <th class="numeric-cell" align="center" style="white-space:nowrap;">Tiếp cận</th>
-                <th class="numeric-cell" align="center">Mua</th>
+                <th class="numeric-cell" align="right">Số lượng bán</th>
               </tr>
             </thead>
             <tbody>
               {{#each reports}}
               <tr>
                 <td class="label-cell" align="left">{{this.product}}</td>
-                <td class="numeric-cell" align="center"><span class="badge color-blue">{{this.views}}</span></td>
-                <td class="numeric-cell" align="center"><span class="badge color-blue">{{this.buys}}</span></td>
+                <td class="numeric-cell" align="right"><span class="badge color-blue">{{this.buys}}</span></td>
               </tr>
               {{else}}
               <tr>
-                <td class="label-cell text-color-red" colspan="3" align="center" style="padding:10px;">Bạn chưa gửi báo cáo nào trong hôm nay</td>
+                <td class="label-cell text-color-red" colspan="3" align="center" style="padding:10px;">Bạn chưa gửi báo cáo bán hàng hôm nay</td>
               </tr>
               {{/each}}
               {{#if empty_reports}}
               {{else}}
               <tr>
                 <th width="65%" class="label-cell" align="left">Tổng:</th>
-                <th class="numeric-cell" align="center"><span class="badge color-orange">{{sum_reports.views}}</span></th>
-                <th class="numeric-cell" align="center"><span class="badge color-orange">{{sum_reports.buys}}</span></th>
+                <th class="numeric-cell" align="right"><span class="badge color-orange">{{sum_reports.buys}}</span></th>
               </tr>
               {{/if}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-content card-content-padding">
+          <table width="100%">
+            <thead>
+              <tr>
+                <th class="label-cell" align="left">Nhãn hàng</th>
+                <th width="25%" class="numeric-cell" align="right" style="white-space:nowrap;">Tiếp cận</th>
+                <th width="25%" class="numeric-cell" align="right" style="white-space:nowrap;">Người mua</th>
+                <th width="25%" class="numeric-cell" align="right" style="white-space:nowrap;">Người mới</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each brand_reports}}
+              <tr>
+                <td class="label-cell" align="left">{{this.brand}}</td>
+                <td class="numeric-cell" align="right"><span class="badge color-green">{{this.reach}}</span></td>
+                <td class="numeric-cell" align="right"><span class="badge color-green">{{this.buyers}}</span></td>
+                <td class="numeric-cell" align="right"><span class="badge color-green">{{this.newusers}}</span></td>
+              </tr>
+              {{else}}
+              <tr>
+                <td class="label-cell text-color-red" colspan="4" align="center" style="padding:10px;">Bạn chưa báo tiếp cận hôm nay</td>
+              </tr>
+              {{/each}}
             </tbody>
           </table>
         </div>

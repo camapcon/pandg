@@ -6,7 +6,7 @@
           <i class="icon icon-back"></i>
           <span class="ios-only">Quay lại</span>
         </a>
-        <div class="title">Gửi báo cáo</div>
+        <div class="title">Gửi báo cáo tiếp cận</div>
         <div class="right">
           <a href="#" class="link icon-only panel-open" data-panel="right">
             <i class="icon f7-icons ios-only">menu</i>
@@ -16,22 +16,43 @@
       </div>
     </div>
     <div class="page-content" style="padding-bottom:200px;">
-      <input id="productid" type="hidden" value="{{productid}}"/>
       <div class="list media-list no-ios-edges">
           <ul>
               <li class="item-content">
                   <div class="item-inner">
-                      <div class="item-title-row">
-                          <div class="item-title">Sản phẩm báo cáo</div>
-                      </div>
-                      <div class="item-subtitle">{{name}}</div>
+                    <div class="item-title item-label">Chọn nhãn hàng</div>
+                    <div class="item-input-wrap">
+                      <select id="brand">
+                        {{#each brands}}
+                        <option value="{{this.brand}}">{{this.brand}}</option>
+                        {{/each}}
+                      </select>
+                    </div>
                   </div>
               </li>
               <li class="item-content">
                   <div class="item-inner">
-                    <div class="item-title item-label">Số lượng mua</div>
+                    <div class="item-title item-label">Số tiếp cận</div>
                     <div class="item-input-wrap">
-                      <input id="buys" type="number" placeholder="Nhập số sản phẩm">
+                      <input id="reach" type="number" placeholder="Nhập số người" value="{{cache_views}}">
+                      <span class="input-clear-button"></span>
+                    </div>
+                  </div>
+              </li>
+              <li class="item-content">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Số người mua</div>
+                    <div class="item-input-wrap">
+                      <input id="buyers" type="number" placeholder="Nhập số người" value="{{cache_buyers}}">
+                      <span class="input-clear-button"></span>
+                    </div>
+                  </div>
+              </li>
+              <li class="item-content">
+                  <div class="item-inner">
+                    <div class="item-title item-label">Người dùng mới</div>
+                    <div class="item-input-wrap">
+                      <input id="newusers" type="number" placeholder="Nhập số người">
                       <span class="input-clear-button"></span>
                     </div>
                   </div>
@@ -83,52 +104,44 @@
         var app = this.$app;
         var router = this.$router;
         var token = localStorage.getItem("token");
-        var productid = $('#productid').val();
-        //var views = $('#views').val();
-        //var buyers = $('#buyers').val();
-        var buys = $('#buys').val();
-        var display = 0;
-        var product = app.data.preload.byids[productid];
-        /*
-        if(views!=''){
-            if(typeof(app.data.cache[product.brand])=='undefined')
-                app.data.cache[product.brand] = { views: views };
-            else
-                app.data.cache[product.brand]['views'] = views;
-        }
-        if(buyers!=''){
-            if(typeof(app.data.cache[product.brand])=='undefined')
-                app.data.cache[product.brand] = { buyers: buyers };
-            else
-                app.data.cache[product.brand]['buyers'] = buyers;
-        }
-        */
-        if(buys==''){
-          app.dialog.alert('Vui lòng nhập số liệu cần báo cáo', 'Nhắc nhở');
+        var brand = $('#brand').val();
+        var reach = $('#reach').val();
+        var buyers = $('#buyers').val();
+        var newusers = $('#newusers').val();
+        if(typeof(reported_buys[brand])=='undefined'){
+          app.dialog.alert('Bạn chưa báo cáo bán hàng cho sản phẩm nào thuộc nhãn này', 'Nhắc nhở');
           return;
         }
-        /*
-        if(parseInt(views) < parseInt(buyers)){
+        if(reach=='' || buyers=='' || newusers==''){
+          app.dialog.alert('Vui lòng nhập đủ số liệu báo cáo', 'Nhắc nhở');
+          return;
+        }
+        if(parseInt(reach) < parseInt(buyers)){
           app.dialog.alert('Số tiếp cận không được ít hơn số người mua', 'Nhắc nhở');
           return;
         }
-        */
-        app.request.post('http://pg.liveapps.top/index.php/app/report', { 
-            productid:productid, buys:buys, token:token, version:15
+        var total_brand_buys = 0;
+        for(var productid in reported_buys[brand]){
+          total_brand_buys += parseInt(reported_buys[brand][productid]);
+        }
+        if(parseInt(buyers) > total_brand_buys){
+          app.dialog.alert('Số người mua không được lớn hơn tổng số bán của nhãn hàng ('+total_brand_buys+')', 'Nhắc nhở');
+          return;
+        }
+        if(parseInt(buyers) < parseInt(newusers)){
+          app.dialog.alert('Số người mua không được ít hơn số người dùng mới', 'Nhắc nhở');
+          return;
+        }
+        app.request.post('http://pg.liveapps.top/index.php/app/reach', { 
+            brand:brand, reach:reach, buyers:buyers, newusers:newusers, token:token
         }, function (raw) {
           try{
             var json = JSON.parse(raw);
             if(json.result=='success'){
-              var product = app.data.preload.byids[productid];
-              reported = new Date().toDateString();
-              if(typeof(reported_buys[product.brand])=='undefined')
-              {
-                reported_buys[product.brand] = {};
-              }
-              reported_buys[product.brand][productid] = parseInt(buys);
               self.showToastBottom('Báo cáo thành công', function(){
-                router.back('/product/'+self.categoryid, {reloadAll:true, ignoreCache:true});
+                router.back('/status/', {reloadAll:true, ignoreCache:true});
               });
+              reported = new Date().toDateString();
               return;
             }
             /*
@@ -152,17 +165,14 @@
     },
     // Component Data
     data: function () {
-      var product = this.$app.data.preload.byids[this.$route.params.productid];
+      // Must return an object
+      var brands = new Array();
+      for(var i in this.$app.data.preload.brands)
+      {
+          brands.push(this.$app.data.preload.brands[i]);
+      }
       return {
-        productid: this.$route.params.productid,
-        name:product.sku_vi,
-        category:product.category,
-        categoryid:product.categoryid,
-        brand:product.brand,
-        uom:product.uom/*,
-        cache_views:typeof(this.$app.data.cache[product.brand])!='undefined' ? this.$app.data.cache[product.brand]['views'] : '',
-        cache_buyers:typeof(this.$app.data.cache[product.brand])!='undefined' ? this.$app.data.cache[product.brand]['buyers'] : ''
-        */
+        brands: brands
       }
     },
     on: {

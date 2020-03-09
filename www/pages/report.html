@@ -118,6 +118,7 @@
               self.showToastBottom('Báo cáo thành công', function(){
                 router.navigate('/status/', {reloadAll:true, ignoreCache:true});
               });
+              reported = new Date().toDateString();
               return;
             }
             app.dialog.alert('Gửi báo cáo không thành công', 'Báo lỗi');

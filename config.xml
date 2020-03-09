@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="pg.liveapps.top" version="1.3" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="pg1.liveapps.top" version="1.7.2" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>PG ISA Reports</name>
     <description>Market Report Mobile App for PG</description>
     <author email="phu.tran@impression.com.vn" href="http://pg.liveapps.top">MKA</author>
     <content src="index.html" />
   
-    <preference name="phonegap-version" value="cli-7.1.0" />
+    <preference name="phonegap-version" value="cli-9.0.0" />
     <preference name="target-device" value="handset" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <!--preference name="android-build-tool" value="gradle" /-->
@@ -41,14 +41,10 @@
     <feature name="http://api.phonegap.com/1.0/geolocation"/>
     <feature name="http://api.phonegap.com/1.0/network"/>
   
-    <!--plugin name="cordova-plugin-camera" spec="~4.0.3" />
-    <plugin name="cordova-plugin-console" spec="~1.1.0" />
-    <plugin name="cordova-plugin-file" spec="~6.0.1" />
-    <plugin name="cordova-plugin-file-transfer" spec="~1.7.1" />
-    <plugin name="cordova-plugin-geolocation" spec="~4.0.1" />
-    <plugin name="cordova-plugin-splashscreen" spec="~5.0.2" />
-    <plugin name="cordova-plugin-statusbar" spec="~2.4.2" />
-    <plugin name="cordova-plugin-whitelist" spec="~1.3.3" /-->
+    <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+    <feature name="CDVWKWebViewEngine">
+        <param name="ios-package" value="CDVWKWebViewEngine" />
+    </feature>
   
     <platform name="ios">
       <icon src="res/icon/ios/icon-1024.png" width="1024" height="1024"/>
@@ -91,10 +87,10 @@
       <edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="overwrite">
         <string>Need camera to selfie and take photos of sales activities.</string>
       </edit-config>
-        
+      
     </platform>
     <platform name="android">
-      <preference name="android-minSdkVersion" value="16"/>
+      <preference name="android-minSdkVersion" value="19"/>
       <preference name="android-targetSdkVersion" value="28"/>
       <preference name="SplashMaintainAspectRatio" value="true"/>
       <preference name="SplashShowOnlyFirstTime" value="false"/>
@@ -111,29 +107,23 @@
       <splash density="port-xhdpi" src="res/screen/android/splash-port-xhdpi.png"/>
       <splash density="port-xxhdpi" src="res/screen/android/splash-port-xxhdpi.png"/>
       <splash density="port-xxxhdpi" src="res/screen/android/splash-port-xxxhdpi.png"/>
-        <allow-intent href="market:*" />
-        <allow-intent href="http://*/*" />
-        <allow-intent href="https://*/*" />
-        <allow-intent href="tel:*" />
-        <allow-intent href="sms:*" />
-        <allow-intent href="mailto:*" />
-        <allow-intent href="geo:*" />
-        <!--edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-            <application android:usesCleartextTraffic="true" />
-        </edit-config-->
-        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
-            <application android:networkSecurityConfig="@xml/network_security_config" />
-        </edit-config>
-        <resource-file src="res/xml/network_security_config.xml" target="res/xml/network_security_config.xml" />
+      <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
+          <application android:networkSecurityConfig="@xml/network_security_config" />
+      </edit-config>
+      <resource-file src="res/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
     </platform>
     
     <access origin="*" />
+    <allow-navigation href="*"/>
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+    </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
